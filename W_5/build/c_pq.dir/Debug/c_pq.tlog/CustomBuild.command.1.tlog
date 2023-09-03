@@ -1,0 +1,10 @@
+^C:\DOCK\PSQ 001\C_PQ\W_5\CMAKELISTS.TXT
+setlocal
+C:\Dock\QT\Tools\CMake_64\bin\cmake.exe "-SC:/Dock/PSQ 001/c_pq/W_5" "-BC:/Dock/PSQ 001/c_pq/W_5/build" --check-stamp-file "C:/Dock/PSQ 001/c_pq/W_5/build/CMakeFiles/generate.stamp"
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
