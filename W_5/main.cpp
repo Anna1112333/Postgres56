@@ -3,16 +3,16 @@
 #include <pqxx/pqxx>
 #include <Windows.h>
 //#pragma execution_character_set( "utf-8" )
+
 class table {
 public:
 	
-	table(pqxx::connection& c1) : t(c1) {
-	//SetConsoleCP(CP_UTF8);
-	//SetConsoleOutputCP(CP_UTF8);
-	//setvbuf(stdout, nullptr, _IOFBF, 1000);
-	};
+	table(pqxx::connection& c1) : t(c1) {};
 	pqxx::work t;
+	pqxx::result res = t.exec("SELECT 1");
+
 	void create_table() {
+		
 		std::string table_create, new_table;
 		std::cout << "Если вам необходимо создать таблицу для данных введите yes если нет - то no.";
 		std::cin >> table_create;
@@ -21,11 +21,11 @@ public:
 			std::cout << "Напишите название таблицы: ";
 			std::cin >> new_table;
 
-			//pqxx::result = t1.exec("create table" + new_table + "user_id int, emil string;");
+			pqxx::result r = t.exec("create table " + new_table + " (user_id int, email string);");
 					}			
 		std::cout << "Ваша таблица "
 			<<new_table
-			<<"создана и в ней есть поля по умолчанию:user_id, name, soname, email, phone_number\n";
+			<<" создана и в ней есть поля по умолчанию:user_id, name, soname, email, phone_number\n";
 		
 	}
 	void insert_client(){}
@@ -36,7 +36,7 @@ public:
 
 	}
 	void faind_client(int r){
-		setlocale(LC_ALL, "rus");
+		setlocale(LC_ALL, "RUS");
 		/*for (std::tuple<int, std::string, std::string, std::string, long long int>q1 : t.query<int,
 		std::string, std::string, std::string, long long int>("select user_id, name, soname, email, phone_number "
 			"from (select * from users"
@@ -47,31 +47,23 @@ public:
 		for (auto [user_id, name, soname, email, phone_number] : t.query
 			<int, std::string, std::string, std::string, long long int>
 			("select user_id, name, soname, email, phone_number from "
-			"(select * from users left join us_email on users.user_id=us_email.user_id_e) v "
-			"left join us_phone on v.user_id=us_phone.user_id_ph order by user_id;"))
-			std::cout << "user_id = " << user_id <<"   name = "<<name<<"   soname = "
-			<<soname <<"   email = "<<email<<"   phone_number= "<<phone_number << std::endl;
+				"(select * from users left join us_email on users.user_id=us_email.user_id_e) v "
+				"left join us_phone on v.user_id=us_phone.user_id_ph order by user_id;"))
+		{
+			
+			std::cout << "user_id = " << user_id << "   name = " << name << "   soname = "
+				<< soname << "   email = " << email << "   phone_number= " << phone_number << std::endl;
+		}
 	}
 };
 int main()
 {
-	//
+	
 	//SetConsoleCP(CP_UTF8);
 	//SetConsoleOutputCP(CP_UTF8);
 	//setvbuf(stdout, nullptr, _IOFBF, 1000);
-	{setlocale(LC_ALL, "RUS");
-
-	/*std::string table_create;
-	std::cout << "Если вам необходимо создать базу данных введите yes если нет - то no.";
-	std::cin >> table_create;
-	if (table_create == "yes") { //Создаём таблицу;
-			std::string new_table;		
-			std::cout << "Напишите название таблицы: ";
-			std::cin >> new_table;
-			void create_table();		
-			std::cout << "Ваша таблица  "<<new_table<<"   создана и в ней есть поля по умолчанию:user_id, name, soname, email, phone_number\n";
-	}*/
-	}
+	
+	setlocale(LC_ALL, "RUS");	 
 
 	try {
 		pqxx::connection c(
@@ -86,7 +78,7 @@ int main()
 	int i=0;
 	{             //по русски не выводит
 		std::cout << "Insert number for search:  1 by name, 2 by soname, 3 by phone number, 4 by email: ";
-		setlocale(LC_ALL, "UTF8");
+		//setlocale(LC_ALL, "UTF8");
 	}
 	while (i > 4 || i < 1)
 	{
