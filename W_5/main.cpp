@@ -2,14 +2,16 @@
 #include <tuple>
 #include <pqxx/pqxx>
 #include <Windows.h>
-//#pragma execution_character_set( "utf-8" )
+#pragma execution_character_set( "utf-8" )
 
 class table {
 public:
+	pqxx::connection& t0;
+	table(pqxx::connection& c1): t0{c1} {
 	
-	table(pqxx::connection& c1) : t(c1) {};
-	pqxx::work t;
-	pqxx::result res = t.exec("SELECT 1");
+	};
+	pqxx::work t{ t0 };
+	//pqxx::result res = t.exec("SELECT 1");
 
 	void create_table() {
 		
@@ -21,8 +23,9 @@ public:
 			std::cout << "Ќапишите название таблицы: ";
 			std::cin >> new_table;
 
-			pqxx::result r = t.exec("create table " + new_table + " (user_id int, email string);");
-					}			
+			pqxx::result r = t.exec("create table public." + new_table + " (user_id int4, email varchar);");
+					}
+		t.commit();
 		std::cout << "¬аша таблица "
 			<<new_table
 			<<" создана и в ней есть пол€ по умолчанию:user_id, name, soname, email, phone_number\n";
@@ -60,7 +63,7 @@ int main()
 {
 	
 	//SetConsoleCP(CP_UTF8);
-	//SetConsoleOutputCP(CP_UTF8);
+SetConsoleOutputCP(CP_UTF8);
 	//setvbuf(stdout, nullptr, _IOFBF, 1000);
 	
 	setlocale(LC_ALL, "RUS");	 
@@ -72,7 +75,7 @@ int main()
 			"dbname=Task5 "
 			"user=pq "
 			"password=zxc123");
-		
+		std::cout << "base exist /n";
 	table a(c);	
 	a.create_table();
 	int i=0;
@@ -87,7 +90,7 @@ int main()
 			std::cout << "Number was wrong, it should be 1, 2, 3 or 4: ";
 	}
 
-	a.faind_client(i);	
+	//a.faind_client(i);	
 	
 
 
