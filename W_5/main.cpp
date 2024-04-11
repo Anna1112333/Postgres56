@@ -23,7 +23,8 @@ public:
 			std::cout << "Напишите название таблицы: ";
 			std::cin >> new_table;
 			//добавила if not exists
-			pqxx::result r = t.exec("create table if not exists public." + new_table + " (user_id int4, nane varchar(20),"
+			pqxx::result r = t.exec("create table if not exists public." + t.esc(new_table) + 
+				" (user_id int4, nane varchar(20),"
 				"soname varchar(20), email varchar, phone_number int4);");
 					}
 		t.commit();
@@ -41,10 +42,10 @@ public:
 		auto a1 = t.query_value<int>("select max(user_id) from users");	
 		a1++;
 		std::string a = std::to_string(a1);
-		pqxx::result r = t.exec("insert into users (user_id, name, soname) values (" + a +
-			", '" + arr[0] + "', '"+arr[1]+"');"
-		"insert into us_email (user_id_e, email) values ("+a+", '"+arr[2]+"');"
-		"insert into us_phone (user_id_ph, phone_number) values ("+a+", "+arr[3]+"); ");
+		pqxx::result r = t.exec("insert into users (user_id, name, soname) values (" + t.esc(a) +
+			", '" + t.esc(arr[0]) + "', '"+t.esc(arr[1])+"');"
+		"insert into us_email (user_id_e, email) values ("+t.esc(a)+", '"+t.esc(arr[2])+"');"
+		"insert into us_phone (user_id_ph, phone_number) values ("+t.esc(a)+", "+t.esc(arr[3])+"); ");
 	
 	t.commit();
 	
@@ -54,8 +55,8 @@ public:
 		std::cout << "введите id и номер телефона: " << std::endl;
 		std::cout << "id=";      std::cin >> id;
 		std::cout << "2 wbahs: ";    std::cin >> number;
-		pqxx::result r = t.exec(" insert into us_phone (user_id_ph, phone_number) values ("+id+", "
-			 +number + ");");
+		pqxx::result r = t.exec(" insert into us_phone (user_id_ph, phone_number) values ("+t.esc(id)+", "
+			 +t.esc(number) + ");");
 		t.commit();
 	}
 	void change_data_of_client(){ // работает
@@ -65,9 +66,11 @@ public:
 		std::cout << "Введите фамилию клиента:"; std::cin >> arr[2];
 		std::cout << "Введите телефон клиента:"; std::cin >> arr[3];
 		std::cout << "Введите email клиента:"; std::cin >> arr[4];
-		pqxx::result r = t.exec("update users set name='"+arr[1]+"', soname='"+arr[2]+"' where user_id = " + arr[0] + ";"
-			" insert into us_phone (user_id_ph, phone_number) values (" + arr[0] + ", "	+ arr[3] + ");"
-			"insert into us_email(user_id_e, email) values("+arr[0]+", '"+arr[4]+"');");
+		pqxx::result r = t.exec("update users set name='"+t.esc(arr[1])+"', soname='"+t.esc(arr[2])+
+			"' where user_id = " + t.esc(arr[0]) + ";"
+			" insert into us_phone (user_id_ph, phone_number) values (" + t.esc(arr[0]) + 
+			", "	+ t.esc(arr[3]) + ");"
+			"insert into us_email(user_id_e, email) values("+t.esc(arr[0])+", '"+t.esc(arr[4])+"');");
 		t.commit();
 	}
 	void delete_phone() {// работает
@@ -75,16 +78,16 @@ public:
 		std::cout << "введите id и 2 последние цифры удаляемого телефона: "<<std::endl;
 		std::cout << "id=";      std::cin >> id;
 		std::cout << "2 wbahs: ";    std::cin >> number_end;
-		pqxx::result r = t.exec("delete from us_phone where user_id_ph = " + id +
-			" and phone_number % 100 = " + number_end+";");
+		pqxx::result r = t.exec("delete from us_phone where user_id_ph = " + t.esc(id) +
+			" and phone_number % 100 = " + t.esc(number_end)+";");
 		t.commit();
 	}
 	void delete_client(){		
 		std::string id;
 		std::cout << "Введите id клиента: ";     std::cin >> id;
-		pqxx::result r = t.exec("delete from us_phone where user_id_ph = " + id +";"
-			"delete from us_email where user_id_e = " + id + ";"
-			"delete from users where user_id = " + id + ";"	);
+		pqxx::result r = t.exec("delete from us_phone where user_id_ph = " + t.esc(id) +";"
+			"delete from us_email where user_id_e = " + t.esc(id) + ";"
+			"delete from users where user_id = " + t.esc(id) + ";"	);
 		t.commit();
 	}
 	void faind_client(int r){
@@ -94,14 +97,16 @@ public:
 			("select user_id, coalesce(name, ' ') as name, coalesce(soname, ' ') as soname, "
 				"coalesce(email, ' ') as email,  coalesce(phone_number, 0) from "
 				"(select * from users left join us_email on users.user_id=us_email.user_id_e) v "
-				"left join us_phone on v.user_id=us_phone.user_id_ph order by " + arr[r-1]))
+				"left join us_phone on v.user_id=us_phone.user_id_ph order by " + t.esc(arr[r-1])))
 		{
 			
-			std::cout << "user_id = " << user_id << "   name = " << name << "   soname = "
-				<< soname << "   email = E" << email << "   phone_number= " << phone_number << std::endl;
+			std::cout << "user_id = " <<user_id << "   name = " <<name << "   soname = "
+				<< soname << "   email = E" << email << "   phone_number= " 
+				<<phone_number << std::endl;
 		}
 	}
 };
+
 int main()
 {
 	
